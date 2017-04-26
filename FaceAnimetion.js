@@ -3,314 +3,264 @@
 //=============================================================================
 
 /*:ja
- * v0.0.1
+ * v0.1.0
  * @plugindesc
- * 自作ゲージのメーターを増減する
+ * 顔グラのアニメーションを行う
  *
- * @author Declare War
+ * @author オオホタルサイコ
  *
- * @param OutLine
- * @default 
- * @desc 外枠(img/system)
- *
- * @param InLine
- * @default 
- * @desc ゲージ(img/system)
- *
- * @param X
+ * @param FaceIndex
  * @default 0
- * @desc 出力X座標
+ * @desc 表示する顔グラのインデックス番号
  *
- * @param Y
+ * @param EyeAnmCnt
+ * @default 4
+ * @desc 目のアニメーション数
+ *
+ * @param MouthAnmCnt
+ * @default 2
+ * @desc 口のアニメーション数
+ *
+ * @param FaceWidth
+ * @default 144
+ * @desc 顔グラの横幅
+ *
+ * @param FaceHeight
+ * @default 144
+ * @desc 顔グラの縦幅
+ *
+ * @param OffsetX
+ * @default 18
+ * @desc 顔グラの調整X座標
+ *
+ * @param OffsetY
  * @default 0
- * @desc 出力Y座標
+ * @desc 顔グラの調整Y座標
  *
- * @param InLineMarginL
+ * @param DispFace
  * @default 0
- * @desc ゲージ余白
+ * @desc 顔グラの表示場所
  *
- * @param InLineWidth
- * @default 0
- * @desc ゲージ横幅
- *
- * @param InLineHeight
- * @default 0
- * @desc ゲージ縦幅
- *
- * @param OutLineHeight
- * @default 0
- * @desc ゲージ外枠縦
- *
- * @param MaxGauge
- * @default 200
- * @desc ゲージ最大値
- *
- * @param Visible
- * @default true
- * @desc 表示状態
- *
- * @help ■概要
- * gaugeUpDownプラグインを利用するにはプラグインコマンドから実行します。
- * プラグインコマンドを実行すると会話中のSE効果を変更することが可能です。
+ * @help
+ * ■概要
+ * FaceAnimetionプラグインを利用するにはプラグインコマンドから実行します。
+ * プラグインコマンドを実行すると会話中の顔グラの表示を変更することが可能です。
+ * [FaceWidth] [FaceHeight] [offsetX] [offsetY]は省略可能
  *
  * ■プラグインコマンド
- *   gaugeUpDown add [増減値] [表示状態] [アニメーション]                  	# ゲージを増減します
+ *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] 　　　　　　　　　　　　　　　　　　　　　　　　　　 　           # 顔グラを設定します
+ *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth]                                 　           # 顔グラを設定します
+ *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight]                    　           # 顔グラを設定します
+ *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX]          　           # 顔グラを設定します
+ *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX] [OffsetY]　           # 顔グラを設定します
+ *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX] [OffsetY]　[DispFace] # 顔グラを設定します
+ *   FaceAnimetion clear                                                   　　　　　                         # 初期設定状態に戻します
  */
 
 //name space
-// var faceAnimetion = faceAnimetion || (faceAnimetion = {});
+var fcanm = fcanm || (fcanm = {});
 
-var parseIntStrict = function(value) {
-    var result = parseInt(value, 10);
-    if (isNaN(result)) result = 0;
-    return result;
-};
-    
-// (function(faceAnimetion){
-// 	var GaugeUpDown = (function(){
-//              //constructor
-//              function GaugeUpDown(){
-//                  this.outLine = '';
-//                  this.OutLineSprite = new Sprite();
-//                  this.inLine = '';
-//                  this.InLineSprite = new Sprite();
-//                  this.x = 0;
-//                  this.y = 0;
-//                  this.inLineMarginL = 0;
-//                  this.inLineWidth = 0;
-//                  this.inLineHeight = 0;
-//                  this.outLineHeight = 0;
-//                  this.MaxGauge = 100;
-//                 //1メモリのサイズ
-//                 this.memory = 0;
-//                 //現在のゲージ数
-//                 this.curGauge = this.MaxGauge;
-//                  this.visible = true;
-//                  this._tr = null;
-                 
-//                  //増減する値たち
-//                  this.upDown = 0;
-//                  this.isMinus = false;
-//                  this.isGaugeAnimation = false;
-//                  this.doneGaugeAnimation = true;
-
-//                  //上下移動判定
-//                  this.isVisible = false;
-//                  this.isVisibleAnimation = false;
-//                  this.doneVisibleAnimation = true;
-                 
-                 
-//                  this.initialize();
-//              };
-             
-//              //member methods
-//              GaugeUpDown.prototype.initialize = function(){
-//                 this.parameters = PluginManager.parameters('GaugeUpDown');
-//                 this.outLine = this.parameters['OutLine'] || '';
-//                 this.inLine = this.parameters['InLine'] || '';
-//                 this.x = parseIntStrict(this.parameters['X']) || 0;
-//                 this.outLineHeight = parseIntStrict(this.parameters['OutLineHeight']) || 0;
-//                 this.isVisible = eval(this.parameters['Visible']);
-//                 if(this.isVisible){
-//                     this.y = parseIntStrict(this.parameters['Y']) || 0;
-//                 }else{
-//                     this.y = -1 * outLineHeight;
-//                 }
-//                 this.inLineMarginL = parseIntStrict(this.parameters['InLineMarginL']) || 0;
-//                 this.inLineWidth = parseIntStrict(this.parameters['InLineWidth']) || 0;
-//                 this.inLineHeight = parseIntStrict(this.parameters['InLineHeight']) || 0;
-//                 this.MaxGauge = parseIntStrict(this.parameters['MaxGauge']) || 0;
-//                 this.visible = true;
-//                  //1メモリのサイズ
-//                 this.memory = (this.inLineWidth - this.inLineMarginL) / this.MaxGauge;
-//                 //現在のゲージ数
-//                 this.curGauge = this.MaxGauge;
-//                 this.setOutLineSprite();
-//                 this.setInLineSprite();
-//              };
-             
-//              GaugeUpDown.prototype.setParameter = function(args){
-//                  //parse
-//                  if(args.length < 2){
-//                      this._tr("setParameter: args is invalid.");
-//                      return false;
-//                  }
-//                  if(args[0] =='visible'){
-//                     this.isVisible = eval(args[1]);
-//                     this.isVisibleAnimation = true;
-//                 }else{
-//                     this.upDown = Math.abs(parseIntStrict(args[1]));
-//                     this.isMinus = (parseIntStrict(args[1]) < 0);
-//                     this.isGaugeAnimation = true;
-//                 }
-//                  return true;
-//              };
-                          
-//              GaugeUpDown.prototype.update = function(){
-//                 if(this.isVisibleAnimation && this.doneGaugeAnimation){
-//                     if(this.isVisible){
-//                         //this.yまでSpriteを移動させる
-//                         var vy = parseIntStrict(this.parameters['Y']);
-//                         if(vy > this.y){
-//                             this.doneVisibleAnimation = false;
-//                             this.y += 1;
-//                         }else{
-//                             this.doneVisibleAnimation = true;
-//                             this.isVisibleAnimation = false;
-//                         }
-//                     }else{
-//                         //0-this.outLineHeightまで移動させる
-//                         var vy = -1 * this.outLineHeight;
-//                         if(vy < this.y){
-//                             this.doneVisibleAnimation = false;
-//                             this.y -= 1;
-//                         }else{
-//                             this.doneVisibleAnimation = true;
-//                             this.isVisibleAnimation = false;
-//                         }
-//                     }
-//                 }
-//                 if(this.isGaugeAnimation && this.doneVisibleAnimation){
-//                         //ゲージのアニメーションを行う
-//                         if(this.upDown > 0){
-//                             this.doneGaugeAnimation = false;
-//                             this.upDown -= 1;
-//                             var upper = 1;
-//                             if(this.isMinus){
-//                                 upper *= -1;
-//                             }
-//                             this.curGauge += upper;
-//                             if(this.curGauge < 0) this.curGauge = 0;
-//                             if(this.curGauge > this.MaxGauge) this.curGauge = this.MaxGauge;
-//                         }else{
-//                             this.doneGaugeAnimation = true;
-//                             this.isGaugeAnimation = false;
-//                         }
-//                 }
-//                 this.setOutLineSprite();
-//                 this.setInLineSprite();
-                                    
-//                  return true;
-//              };
-             
-//              GaugeUpDown.prototype.setOutLineSprite = function(){
-//             	this.OutLineSprite.bitmap = ImageManager.loadSystem(this.outLine);
-//             	this.OutLineSprite.x = this.x;
-//             	this.OutLineSprite.y = this.y;
-//                 this.OutLineSprite.visible = this.visible
-//              };
-//              GaugeUpDown.prototype.setInLineSprite = function(){
-//             	this.InLineSprite.bitmap = ImageManager.loadSystem(this.inLine);
-//             	this.InLineSprite.x = this.x;
-//             	this.InLineSprite.y = this.y;
-//                 this.InLineSprite.visible = this.visible
-//     	        var gauge = this.curGauge * this.memory + this.inLineMarginL;
-//     	        this.InLineSprite.setFrame(0, 0, gauge, this.inLineHeight);
-//              };
-             
-//          return GaugeUpDown;
-//      }
-// )();
-//  	faceAnimetion.GaugeUpDown = new GaugeUpDown();
-//  }(faceAnimetion || (faceAnimetion = { }) ));
-
-(function(){
-	
- //-----------------------------------------------------------------------------
- // parse and dispatch plugin command
- //-----------------------------------------------------------------------------
- var _Game_Interpreter_pluginCommand =
-     Game_Interpreter.prototype.pluginCommand;
-     Game_Interpreter.prototype.pluginCommand = function(command, args){
-        _Game_Interpreter_pluginCommand.call(this, command, args);
-         if(command === 'FaceAnimetion'){
-            var gUD = faceAnimetion.GaugeUpDown
-            switch(args[0]){
-            case 'set':
-                //アニメーションの設定
-                faceAnimetion.GaugeUpDown.setParameter(args);
-                break;
-            case 'start':
-                //フェイスを表示する
-                faceAnimetion.GaugeUpDown.setParameter(args);
-                break;
-            default:
-               break;
-            }
-        }
+(function(fcanm){
+  var FaceAnimetion = (function(){
+    //constructor
+    function FaceAnimetion(){
+    this.initialize();
     };
 
-// 　var createUpper = Spriteset_Map.prototype.createUpperLayer;
-// 	Spriteset_Map.prototype.createUpperLayer = function(){
-// 		createUpper.call(this);
-//     	this.addChild(faceAnimetion.GaugeUpDown.OutLineSprite);
-//     	this.addChild(faceAnimetion.GaugeUpDown.InLineSprite);
-//     	};
+    //member methods
+    FaceAnimetion.prototype.initialize = function(){
+      var parameters = PluginManager.parameters("FaceAnimetion");
+      this.faceIndex = Number(parameters["FaceIndex"] || 0);
+      this.eyeAnmCnt = Number(parameters["EyeAnmCnt"] || 0);
+      this.mouthAnmCnt = Number(parameters["MouthAnmCnt"] || 0);
+      this.faceWidth = Number(parameters["FaceWidth"] || Window_Base._faceWidth);
+      this.faceHeight = Number(parameters["FaceHeight"] || Window_Base._faceHeight);
+      this.offsetX = Number(parameters["OffsetX"] || this.standardPadding());
+      this.offsetY = Number(parameters["OffsetY"] || 0);
+      this.dispFace = Number(parameters["DispFace"] || 0);
+    };
 
-// 　var updt = Spriteset_Map.prototype.update;
-// 	Spriteset_Map.prototype.update = function(){
-// 		updt.call(this);
-// 		faceAnimetion.GaugeUpDown.update();
-		
-// 	};
-})();
+    FaceAnimetion.prototype.setParameter = function(args){
+      //parse
+      if(args.length < 4){
+        this._tr("setParameter: args is invalid.");
+        return false;
+      }
 
-var init = Window_Message.prototype.initMembers;
+      var parameters = PluginManager.parameters('FaceAnimetion');
+      this.faceIndex = Number(args[1]);
+      this.eyeAnmCnt = Number(args[2]);
+      this.mouthAnmCnt = Number(args[3]);
+      this.faceWidth = Number(args[4] || this.faceWidth);
+      this.faceHeight = Number(args[5] || this.faceHeight);
+      this.offsetX = Number(args[6] || this.offsetX);
+      this.offsetY = Number(args[7] || this.offsetY);
+      this.dispFace = Number(args[8] || this.dispFace);
 
-Window_Message.prototype.initMembers = function() {
-    init.call(this);
-    this._animetionWidth = 200;
-    this._animetionHeight = 200;
-    this._offsetX = 0;
-    this._offsetY = 0;
-    this._eyeAnimetionCnt = 0;
-    this._mouthAnimetionCnt = 0;
-    this._textstateOffsetX = 0;
-};
+      return true;
+    };
 
-Window_Message.prototype.windowHeight = function() {
-    return this._animetionHeight > 0 ? this._animetionHeight : this.fittingHeight(this.numVisibleRows());
-};
-
-Window_Message.prototype.numVisibleRows = function() {
-    return 4;
-};
-
-Window_Message.prototype.drawMessageFace = function() {
-    this.drawFace($gameMessage.faceName(), /*$gameMessage.faceIndex()*/0, this._offsetX, this._offsetY, this._animetionWidth, this._animetionHeight);
-};
-
-Window_Message.prototype.drawFace = function(faceName, faceIndex, x, y, width, height) {
-    width = width || Window_Base._faceWidth;
-    height = height || Window_Base._faceHeight;
-    var bitmap = ImageManager.loadFace(faceName);
-    var pw = width;
-    var ph = height;
-    var sw = width;
-    var sh = height;
-    var dx = Math.floor(x);
-    var dy = Math.floor(y);
-    var sx = 0;
-    var sy = Math.floor(faceIndex) * ph;
-    this.contents.blt(bitmap, sx, sy, sw, sh, dx, dy);
-};
-
-Window_Message.prototype.refreshDimmerBitmap = function() {
-    if (this._dimmerSprite) {
-        var bitmap = this._dimmerSprite.bitmap;
-        var w = this.width;
-        var h = this.fittingHeight(this.numVisibleRows());
-        var m = this.padding;
-        var c1 = this.dimColor1();
-        var c2 = this.dimColor2();
-        bitmap.resize(w, h);
-        bitmap.gradientFillRect(0, 0, w, m, c2, c1, true);
-        bitmap.fillRect(0, m, w, h - m * 2, c1);
-        bitmap.gradientFillRect(0, h - m, w, m, c1, c2, true);
-        this._dimmerSprite.setFrame(0, 0, w, h);
+      return FaceAnimetion;
     }
-};
+  )();
 
-// Window_Message.prototype.drawMessageFace = function() {
-//     this.drawFace($gameMessage.faceName(), $gameMessage.faceIndex(), 0, 0);
-// };
+  FaceAnimetion.prototype.clearParameter = function(){
+    this.initialize();
+  };
+  fcanm.FaceAnimetion = new FaceAnimetion();
+}(fcanm || (fcanm = { }) ));
+
+(function(){
+  //-----------------------------------------------------------------------------
+	// parse and dispatch plugin command
+	//-----------------------------------------------------------------------------
+	var _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
+	Game_Interpreter.prototype.pluginCommand = function(command, args){
+		_Game_Interpreter_pluginCommand.call(this, command, args);
+		if(command === 'FaceAnimetion'){
+			switch(args[0]){
+				case 'set':
+					fcanm.FaceAnimetion.setParameter(args);
+					break;
+				case 'clear':
+					fcanm.FaceAnimetion.clearParameter();
+					break;
+					default:
+				break;
+			}
+		}
+	};
+
+
+  var msgInit = Window_Message.prototype.initialize;
+  Window_Message.prototype.initialize = function(){
+    msgInit.call(this);
+    fcanm.FaceAnimetion.initialize();
+    this._eyeAnimetionFlg = false;
+    this._faceSprite = new Sprite_Base();
+    this._eyeSprite = new Sprite_Base();
+    this._eyeCnt = 0;
+    this._mouthSprite = new Sprite_Base();
+    this.addChild(this._faceSprite);
+    this.addChild(this._eyeSprite);
+    this.addChild(this._mouthSprite);
+  }
+
+  Window_Message.prototype.newLineX = function() {
+      return (fcanm.FaceAnimetion.dispFace > 0 || $gameMessage.faceName() == "")  ? 0 : fcanm.FaceAnimetion.faceWidth;
+  };
+
+	Window_Message.prototype.drawMessageFace = function() {
+	    this.drawFace($gameMessage.faceName(), fcanm.FaceAnimetion.faceIndex, 0, 0, fcanm.FaceAnimetion.faceWidth, fcanm.FaceAnimetion.faceHeight);
+	};
+
+	Window_Message.prototype.drawFace = function(faceName, faceIndex, x, y, width, height) {
+    this._eyeCnt = 0;
+    this.procCnt = 0;
+    this.cnt = 0;
+    this._eyeAnimetionFlg = false;
+    this.eyeIndex = 0;
+    this.mouthIndex = 1;
+    if(faceName != ""){
+      var bitmap = ImageManager.loadFace(faceName);
+      width = (width > 0) ? width : Window_Base._faceWidth;
+      height = (height > 0) ? height : Window_Base._faceHeight;
+      var bitmap = ImageManager.loadFace(faceName);
+      var sw = width;
+      var sh = height;
+      var dx = Math.floor(x);
+      var dy = Math.floor(y);
+      var sx = 0;
+      var sy = Math.floor(faceIndex) * sh;
+      // // EyeSprite
+      var sx2 = sw;
+      var sy2 = Math.floor(faceIndex) * sh;
+      // // MouthSprite
+      var sx3 = (fcanm.FaceAnimetion.eyeAnmCnt + 1) * sw;
+      var sy3 = Math.floor(faceIndex) * sh;
+      this._faceSprite.bitmap = bitmap;
+      this._faceSprite.setFrame(sx, sy, sw, sh);
+      this._faceSprite.x = 0 + fcanm.FaceAnimetion.offsetX;
+      this._faceSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimetion.offsetY;
+      this._eyeSprite.bitmap = bitmap;
+      this._eyeSprite.setFrame(sx2, sy2, sw, sh);
+      this._eyeSprite.x = 0 + fcanm.FaceAnimetion.offsetX;
+      this._eyeSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimetion.offsetY;
+      this._mouthSprite.bitmap = bitmap;
+      this._mouthSprite.setFrame(sx3, sy3, sw, sh);
+      this._mouthSprite.x = 0 + fcanm.FaceAnimetion.offsetX;
+      this._mouthSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimetion.offsetY;
+    }
+  }
+
+	Window_Message.prototype.drawFaceEye = function(faceName, faceIndex, eyeIndex, x, y, width, height) {
+    if(this._eyeSprite.bitmap != null){
+      width = (width > 0) ? width : Window_Base._faceWidth;
+      height = (height > 0) ? height : Window_Base._faceHeight;
+      var sw = width;
+      var sh = height;
+      var dx = Math.floor(x);
+      var dy = Math.floor(y);
+      var sx = (eyeIndex + 1) * sw;
+      var sy = Math.floor(faceIndex) * sh;
+      this._eyeSprite.setFrame(sx, sy, sw, sh);
+    }
+	};
+
+	Window_Message.prototype.drawFaceMouth = function(faceName, faceIndex, mouthIndex, x, y, width, height) {
+    if(this._mouthSprite.bitmap != null){
+      width = (width > 0) ? width : Window_Base._faceWidth;
+	    height = (height > 0) ? height : Window_Base._faceHeight;
+	    var sw = width;
+	    var sh = height;
+	    var dx = Math.floor(x);
+	    var dy = Math.floor(y);
+	    var sx = (fcanm.FaceAnimetion.eyeAnmCnt + mouthIndex + 1) * sw;
+	    var sy = Math.floor(faceIndex) * sh;
+      this._mouthSprite.setFrame(sx, sy, sw, sh);
+    }
+	};
+
+  var msgUpd = Window_Message.prototype.update;
+  Window_Message.prototype.update = function() {
+    this.cnt = this.cnt + 1;
+    if(!this._eyeAnimetionFlg && Math.floor(Math.random() * (120 - 1 + 1) + 1) == 3){
+      this._eyeAnimetionFlg = true;
+    }
+    if(this._eyeAnimetionFlg && this.cnt%10 == 0){
+      if(this._eyeSprite.bitmap != null){
+        this.eyeIndex = this.eyeIndex % fcanm.FaceAnimetion.eyeAnmCnt;
+        this.drawFaceEye($gameMessage.faceName(), fcanm.FaceAnimetion.faceIndex, this.eyeIndex, this._faceSprite.x, this._faceSprite.y, this._faceSprite.width, this._faceSprite.height);
+        this.eyeIndex = this.eyeIndex + 1;
+        this._eyeCnt = this._eyeCnt + 1;
+        if(this._eyeCnt == fcanm.FaceAnimetion.eyeAnmCnt + 1){
+          this._eyeAnimetionFlg = false;
+          this._eyeCnt = 0;
+          this.eyeIndex = 0;
+        }
+      }
+    }
+    msgUpd.call(this);
+  };
+
+  var msgProcChara = Window_Message.prototype.processCharacter
+  Window_Message.prototype.processCharacter = function(textState){
+    msgProcChara.call(this, this._textState);
+    this.procCnt = this.procCnt + 1;
+    if(this.procCnt%5 == 0){
+      if(this._mouthSprite.bitmap != null){
+        this.mouthIndex = (this.mouthIndex + 1) % fcanm.FaceAnimetion.mouthAnmCnt;
+        this.drawFaceMouth($gameMessage.faceName(), fcanm.FaceAnimetion.faceIndex, this.mouthIndex, this._faceSprite.x, this._faceSprite.y, this._faceSprite.width, this._faceSprite.height);
+      }
+    }
+  };
+
+  var msgClose = Window_Message.prototype.terminateMessage;
+  Window_Message.prototype.terminateMessage = function() {
+    this._faceSprite.bitmap = null;
+    this._mouthSprite.bitmap = null;
+    this._eyeSprite.bitmap = null;
+    msgClose.call(this);
+  };
+
+})();
