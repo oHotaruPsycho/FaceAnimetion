@@ -257,6 +257,9 @@ var fcanm = fcanm || (fcanm = {});
 
   var msgClose = Window_Message.prototype.terminateMessage;
   Window_Message.prototype.terminateMessage = function() {
+    this._faceSprite.bitmap = null;
+    this._mouthSprite.bitmap = null;
+    this._eyeSprite.bitmap = null;
     msgClose.call(this);
   };
 
