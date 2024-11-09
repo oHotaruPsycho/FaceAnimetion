@@ -1,5 +1,5 @@
 //=============================================================================
-// FaceAnimetion.js
+// FaceAnimation.js
 //=============================================================================
 
 /*:ja
@@ -43,33 +43,33 @@
  *
  * @help
  * ■概要
- * FaceAnimetionプラグインを利用するにはプラグインコマンドから実行します。
+ * FaceAnimationプラグインを利用するにはプラグインコマンドから実行します。
  * プラグインコマンドを実行すると会話中の顔グラの表示を変更することが可能です。
  * [FaceWidth] [FaceHeight] [offsetX] [offsetY]は省略可能
  *
  * ■プラグインコマンド
- *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] 　　　　　　　　　　　　　　　　　　　　　　　　　　 　           # 顔グラを設定します
- *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth]                                 　           # 顔グラを設定します
- *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight]                    　           # 顔グラを設定します
- *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX]          　           # 顔グラを設定します
- *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX] [OffsetY]　           # 顔グラを設定します
- *   FaceAnimetion set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX] [OffsetY]　[DispFace] # 顔グラを設定します
- *   FaceAnimetion clear                                                   　　　　　                         # 初期設定状態に戻します
+ *   FaceAnimation set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] 　　　　　　　　　　　　　　　　　　　　　　　　　　 　           # 顔グラを設定します
+ *   FaceAnimation set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth]                                 　           # 顔グラを設定します
+ *   FaceAnimation set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight]                    　           # 顔グラを設定します
+ *   FaceAnimation set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX]          　           # 顔グラを設定します
+ *   FaceAnimation set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX] [OffsetY]　           # 顔グラを設定します
+ *   FaceAnimation set [FaceIndex] [EyeAnmCnt] [MouthAnmCnt] [FaceWidth] [FaceHeight] [OffsetX] [OffsetY]　[DispFace] # 顔グラを設定します
+ *   FaceAnimation clear                                                   　　　　　                         # 初期設定状態に戻します
  */
 
 //name space
 var fcanm = fcanm || (fcanm = {});
 
 (function(fcanm){
-  var FaceAnimetion = (function(){
+  var FaceAnimation = (function(){
     //constructor
-    function FaceAnimetion(){
+    function FaceAnimation(){
     this.initialize();
     };
 
     //member methods
-    FaceAnimetion.prototype.initialize = function(){
-      var parameters = PluginManager.parameters("FaceAnimetion");
+    FaceAnimation.prototype.initialize = function(){
+      var parameters = PluginManager.parameters("FaceAnimation");
       this.faceIndex = Number(parameters["FaceIndex"] || 0);
       this.eyeAnmCnt = Number(parameters["EyeAnmCnt"] || 0);
       this.mouthAnmCnt = Number(parameters["MouthAnmCnt"] || 0);
@@ -80,14 +80,14 @@ var fcanm = fcanm || (fcanm = {});
       this.dispFace = Number(parameters["DispFace"] || 0);
     };
 
-    FaceAnimetion.prototype.setParameter = function(args){
+    FaceAnimation.prototype.setParameter = function(args){
       //parse
       if(args.length < 4){
         this._tr("setParameter: args is invalid.");
         return false;
       }
 
-      var parameters = PluginManager.parameters('FaceAnimetion');
+      var parameters = PluginManager.parameters('FaceAnimation');
       this.faceIndex = Number(args[1]);
       this.eyeAnmCnt = Number(args[2]);
       this.mouthAnmCnt = Number(args[3]);
@@ -100,14 +100,14 @@ var fcanm = fcanm || (fcanm = {});
       return true;
     };
 
-      return FaceAnimetion;
+      return FaceAnimation;
     }
   )();
 
-  FaceAnimetion.prototype.clearParameter = function(){
+  FaceAnimation.prototype.clearParameter = function(){
     this.initialize();
   };
-  fcanm.FaceAnimetion = new FaceAnimetion();
+  fcanm.FaceAnimation = new FaceAnimation();
 }(fcanm || (fcanm = { }) ));
 
 (function(){
@@ -117,13 +117,13 @@ var fcanm = fcanm || (fcanm = {});
 	var _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 	Game_Interpreter.prototype.pluginCommand = function(command, args){
 		_Game_Interpreter_pluginCommand.call(this, command, args);
-		if(command === 'FaceAnimetion'){
+		if(command === 'FaceAnimation'){
 			switch(args[0]){
 				case 'set':
-					fcanm.FaceAnimetion.setParameter(args);
+					fcanm.FaceAnimation.setParameter(args);
 					break;
 				case 'clear':
-					fcanm.FaceAnimetion.clearParameter();
+					fcanm.FaceAnimation.clearParameter();
 					break;
 					default:
 				break;
@@ -135,8 +135,8 @@ var fcanm = fcanm || (fcanm = {});
   var msgInit = Window_Message.prototype.initialize;
   Window_Message.prototype.initialize = function(){
     msgInit.call(this);
-    fcanm.FaceAnimetion.initialize();
-    this._eyeAnimetionFlg = false;
+    fcanm.FaceAnimation.initialize();
+    this._eyeAnimationFlg = false;
     this._faceSprite = new Sprite_Base();
     this._eyeSprite = new Sprite_Base();
     this._eyeCnt = 0;
@@ -147,18 +147,18 @@ var fcanm = fcanm || (fcanm = {});
   }
 
   Window_Message.prototype.newLineX = function() {
-      return (fcanm.FaceAnimetion.dispFace > 0 || $gameMessage.faceName() == "")  ? 0 : fcanm.FaceAnimetion.faceWidth;
+      return (fcanm.FaceAnimation.dispFace > 0 || $gameMessage.faceName() == "")  ? 0 : fcanm.FaceAnimation.faceWidth;
   };
 
 	Window_Message.prototype.drawMessageFace = function() {
-	    this.drawFace($gameMessage.faceName(), fcanm.FaceAnimetion.faceIndex, 0, 0, fcanm.FaceAnimetion.faceWidth, fcanm.FaceAnimetion.faceHeight);
+	    this.drawFace($gameMessage.faceName(), fcanm.FaceAnimation.faceIndex, 0, 0, fcanm.FaceAnimation.faceWidth, fcanm.FaceAnimation.faceHeight);
 	};
 
 	Window_Message.prototype.drawFace = function(faceName, faceIndex, x, y, width, height) {
     this._eyeCnt = 0;
     this.procCnt = 0;
     this.cnt = 0;
-    this._eyeAnimetionFlg = false;
+    this._eyeAnimationFlg = false;
     this.eyeIndex = 0;
     this.mouthIndex = 1;
     if(faceName != ""){
@@ -176,20 +176,20 @@ var fcanm = fcanm || (fcanm = {});
       var sx2 = sw;
       var sy2 = Math.floor(faceIndex) * sh;
       // // MouthSprite
-      var sx3 = (fcanm.FaceAnimetion.eyeAnmCnt + 1) * sw;
+      var sx3 = (fcanm.FaceAnimation.eyeAnmCnt + 1) * sw;
       var sy3 = Math.floor(faceIndex) * sh;
       this._faceSprite.bitmap = bitmap;
       this._faceSprite.setFrame(sx, sy, sw, sh);
-      this._faceSprite.x = 0 + fcanm.FaceAnimetion.offsetX;
-      this._faceSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimetion.offsetY;
+      this._faceSprite.x = 0 + fcanm.FaceAnimation.offsetX;
+      this._faceSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimation.offsetY;
       this._eyeSprite.bitmap = bitmap;
       this._eyeSprite.setFrame(sx2, sy2, sw, sh);
-      this._eyeSprite.x = 0 + fcanm.FaceAnimetion.offsetX;
-      this._eyeSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimetion.offsetY;
+      this._eyeSprite.x = 0 + fcanm.FaceAnimation.offsetX;
+      this._eyeSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimation.offsetY;
       this._mouthSprite.bitmap = bitmap;
       this._mouthSprite.setFrame(sx3, sy3, sw, sh);
-      this._mouthSprite.x = 0 + fcanm.FaceAnimetion.offsetX;
-      this._mouthSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimetion.offsetY;
+      this._mouthSprite.x = 0 + fcanm.FaceAnimation.offsetX;
+      this._mouthSprite.y = (Window_Base._faceHeight + this.lineHeight()/2) - height + fcanm.FaceAnimation.offsetY;
     }
   }
 
@@ -215,7 +215,7 @@ var fcanm = fcanm || (fcanm = {});
 	    var sh = height;
 	    var dx = Math.floor(x);
 	    var dy = Math.floor(y);
-	    var sx = (fcanm.FaceAnimetion.eyeAnmCnt + mouthIndex + 1) * sw;
+	    var sx = (fcanm.FaceAnimation.eyeAnmCnt + mouthIndex + 1) * sw;
 	    var sy = Math.floor(faceIndex) * sh;
       this._mouthSprite.setFrame(sx, sy, sw, sh);
     }
@@ -224,17 +224,17 @@ var fcanm = fcanm || (fcanm = {});
   var msgUpd = Window_Message.prototype.update;
   Window_Message.prototype.update = function() {
     this.cnt = this.cnt + 1;
-    if(!this._eyeAnimetionFlg && Math.floor(Math.random() * (120 - 1 + 1) + 1) == 3){
-      this._eyeAnimetionFlg = true;
+    if(!this._eyeAnimationFlg && Math.floor(Math.random() * (120 - 1 + 1) + 1) == 3){
+      this._eyeAnimationFlg = true;
     }
-    if(this._eyeAnimetionFlg && this.cnt%10 == 0){
+    if(this._eyeAnimationFlg && this.cnt%10 == 0){
       if(this._eyeSprite.bitmap != null){
-        this.eyeIndex = this.eyeIndex % fcanm.FaceAnimetion.eyeAnmCnt;
-        this.drawFaceEye($gameMessage.faceName(), fcanm.FaceAnimetion.faceIndex, this.eyeIndex, this._faceSprite.x, this._faceSprite.y, this._faceSprite.width, this._faceSprite.height);
+        this.eyeIndex = this.eyeIndex % fcanm.FaceAnimation.eyeAnmCnt;
+        this.drawFaceEye($gameMessage.faceName(), fcanm.FaceAnimation.faceIndex, this.eyeIndex, this._faceSprite.x, this._faceSprite.y, this._faceSprite.width, this._faceSprite.height);
         this.eyeIndex = this.eyeIndex + 1;
         this._eyeCnt = this._eyeCnt + 1;
-        if(this._eyeCnt == fcanm.FaceAnimetion.eyeAnmCnt + 1){
-          this._eyeAnimetionFlg = false;
+        if(this._eyeCnt == fcanm.FaceAnimation.eyeAnmCnt + 1){
+          this._eyeAnimationFlg = false;
           this._eyeCnt = 0;
           this.eyeIndex = 0;
         }
@@ -249,8 +249,8 @@ var fcanm = fcanm || (fcanm = {});
     this.procCnt = this.procCnt + 1;
     if(this.procCnt%5 == 0){
       if(this._mouthSprite.bitmap != null){
-        this.mouthIndex = (this.mouthIndex + 1) % fcanm.FaceAnimetion.mouthAnmCnt;
-        this.drawFaceMouth($gameMessage.faceName(), fcanm.FaceAnimetion.faceIndex, this.mouthIndex, this._faceSprite.x, this._faceSprite.y, this._faceSprite.width, this._faceSprite.height);
+        this.mouthIndex = (this.mouthIndex + 1) % fcanm.FaceAnimation.mouthAnmCnt;
+        this.drawFaceMouth($gameMessage.faceName(), fcanm.FaceAnimation.faceIndex, this.mouthIndex, this._faceSprite.x, this._faceSprite.y, this._faceSprite.width, this._faceSprite.height);
       }
     }
   };
